@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Alcyone Plus</string>
+    <string name="settingsScreen">Экран настроек</string>
+    <string name="newsScreen">Экран новостей</string>
+    <string name="homeScreen">Домашнаяя</string>
+    <string name="firstTab">Первая вкладка</string>
+    <string name="secondTab">Вторая вкладка</string>
+    <string name="Back">Назад</string>
+    <string name="Next">Вперед</string>
+    <string name="firstSubGroup">1ая подгруппа</string>
+    <string name="secondSubGroup">2ая подгруппа</string>
+    <string name="Today">Сегодня</string>
+    <string name="aboutMe">Я начинающий Android-разработчик языка Kotlin. Свободное время уделяю изучению новых мобильных технологий, тестирую новомодные фичи и развиваю свой проект.</string>
+    <string name="aboutMeTitle">Обо мне</string>
+    <string name="aboutApp">"Приложение является продолжением одноименного проекта Alcyone, над которым я вел работы будучи студентом Транспортного колледжа. "</string>
+    <string name="aboutAppTitle">О приложении</string>
+    <string name="howItWork">Четность недели определяется особым методом. Если номер недели делится на два без остатка - это четная неделя, если нет - нечетная.         Как правило, первая учебная неделя является нечетной, далее они чередуются.</string>
+    <string name="howItWorkTitle">Как это работает</string>
+    <string name="contact">Для связи, в дальнейшем, будет создан отдельный Telegram-канал. Следите за новостями!</string>
+    <string name="contactTitle">Связь</string>
+    <string name="alternativeModeTitle">Альтернативный режим</string>
+    <string name="alternativeMode">Включите, если четность не совпадает с вашим учебным расписанием. Рекомендуется перезапустить приложение для применения настроек.</string>
+    <string name="homeScreenBtmNav">Главная</string>
+    <string name="newsScreenBtmNav">Новости</string>
+    <string name="infoScreenBtmNav">Инфо</string>
+</resources>

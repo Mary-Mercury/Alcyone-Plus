@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Alcyone Plus</string>
+    <string name="settingsScreen">Settings Screen</string>
+    <string name="newsScreen">News Screen</string>
+    <string name="homeScreen">Home Screen</string>
+    <string name="firstTab">First Tab</string>
+    <string name="secondTab">Second Tab</string>
+    <string name="Back">Back</string>
+    <string name="Next">Next</string>
+    <string name="firstSubGroup">1st subgroup</string>
+    <string name="secondSubGroup">2nd subgroup</string>
+    <string name="Today">Today</string>
+    <string name="aboutMe">I am an aspiring Android developer of the Kotlin language. I spend my free time studying new mobile technologies, testing newfangled features and developing my project.</string>
+    <string name="aboutMeTitle">About me</string>
+    <string name="aboutApp">The application is a continuation of the Alcyone project of the same name, which I worked on as a college student.</string>
+    <string name="aboutAppTitle">About app</string>
+    <string name="howItWork">The parity of the week is determined by a special method.If the         week number is divided into two without remainder, it is an even week, if not, it is an odd         week. As a rule, the first school week is odd, then they alternate.</string>
+    <string name="howItWorkTitle">How ot work</string>
+    <string name="contact">A separate Telegram channel will be created for communication in the future. Follow the news!</string>
+    <string name="contactTitle">Connection</string>
+    <string name="alternativeModeTitle">Alternative mode</string>
+    <string name="alternativeMode">Turn it on if the parity doesnt match your study schedule. It is recommended to restart the application to apply the settings.</string>
+    <string name="homeScreenBtmNav">Main</string>
+    <string name="newsScreenBtmNav">News</string>
+    <string name="infoScreenBtmNav">Info</string>
+</resources>

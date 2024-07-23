@@ -1,8 +1,10 @@
 package com.mary.alcyoneplus.UI
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,16 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +36,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.mary.alcyoneplus.Data.ApiResult
+import com.mary.alcyoneplus.Data.NewsDto
+import com.mary.alcyoneplus.Data.TableTestDto
 import com.mary.alcyoneplus.R
 import com.mary.compose.AlcyonePlusTheme
 
@@ -46,24 +55,33 @@ fun HomeScreen() {
 }
 
 @Composable
-fun NewsScreen() {
+fun NewsScreen(viewModel: MainViewModel = hiltViewModel()) {
+    val newsState by viewModel.news.collectAsState()
 
-    val newsList = listOf(
-        News("Обновление расписания для группы 3842.9", "Было обновлено расписание для группы 3842.9, изменения затронули следующие дни: Понедельник, Среду, Пятницу и Субботу."),
-        News("Обновление расписания для группы 3842.9", "Было обновлено расписание для группы 3842.9, изменения затронули следующие дни: Понедельник, Среду, Пятницу и Субботу."),
-        News("Обновление расписания для группы 3842.9", "Было обновлено расписание для группы 3842.9, изменения затронули следующие дни: Понедельник, Среду, Пятницу и Субботу.")
-    )
-    NewsList(newsList)
+
+    when (newsState) {
+        is ApiResult.Loading -> {
+            LoadingView()
+        }
+        is ApiResult.Error -> {
+//            Text("Error: ${(newsState as ApiResult.Error).message}")
+            Text(text = "An error occurred")
+        }
+        is ApiResult.Success -> {
+            val newsList = (newsState as ApiResult.Success<List<NewsDto>>).data
+            LazyColumn {
+                items(newsList) { news ->
+                    NewsCard(news)
+                }
+            }
+        }
+    }
 }
 
 @Composable
-fun NewsList(newsList: List<News>) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
-    ) {
-        items(newsList) { news ->
-            NewsCard(title = news.title, content = news.content)
-        }
+fun LoadingView() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 
@@ -126,15 +144,7 @@ fun InfoScreen() {
                     title = stringResource(R.string.contactTitle),
                     content = stringResource(R.string.contact)
                 )
-            }
         }
-}
-
-@Preview
-@Composable
-fun InfoScreenPreview() {
-    AlcyonePlusTheme {
-        InfoScreen()
     }
 }
 
@@ -149,24 +159,54 @@ fun TextSection(title: String, content: String) {
 }
 
 @Composable
-fun FirstTab() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(stringResource(R.string.firstTab))
+fun FirstTab(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val newsState by viewModel.filteredDataFlow.collectAsState()
+
+    when (newsState) {
+        is ApiResult.Loading -> {
+            LoadingView()
+        }
+        is ApiResult.Error -> {
+//            Text("Error: ${(newsState as ApiResult.Error).message}")
+            Text(text = "An error occurred")
+        }
+        is ApiResult.Success -> {
+            val newsList = (newsState as ApiResult.Success<List<TableTestDto>>).data
+            val lastSixItems = newsList.take(6)
+            LazyColumn {
+                items(lastSixItems) { news ->
+                    ScheduleCard(news)
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun SecondTab() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(stringResource(R.string.secondTab))
+fun SecondTab(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val newsState by viewModel.filteredDataFlow.collectAsState()
+
+    when (newsState) {
+        is ApiResult.Loading -> {
+            LoadingView()
+        }
+        is ApiResult.Error -> {
+//            Text("Error: ${(newsState as ApiResult.Error).message}")
+            Text(text = "An error occurred")
+        }
+        is ApiResult.Success -> {
+            val newsList = (newsState as ApiResult.Success<List<TableTestDto>>).data
+            val lastSixItems = newsList.takeLast(6)
+            LazyColumn {
+                items(lastSixItems) { news ->
+                    ScheduleCard(news)
+                }
+            }
+        }
     }
 }
 
@@ -192,7 +232,22 @@ fun MainScreen() {
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(
+    showSystemUi = true,
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+fun MainScreenPreviewNight() {
+    AlcyonePlusTheme {
+        MainScreen()
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    showBackground = true,
+)
 @Composable
 fun MainScreenPreview() {
     AlcyonePlusTheme {

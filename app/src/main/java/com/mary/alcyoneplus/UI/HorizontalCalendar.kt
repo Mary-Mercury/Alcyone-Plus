@@ -1,5 +1,7 @@
 package com.mary.alcyoneplus.UI
 
+import android.text.format.DateUtils
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mary.alcyoneplus.R
+import com.mary.compose.AlcyonePlusTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,9 +39,15 @@ import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import java.text.SimpleDateFormat
+import java.time.temporal.WeekFields
+import java.util.Calendar
+import java.util.Locale.ENGLISH
+import java.util.Date
+import java.util.Locale
 
 
-        //Код был аккуратно взят и слегка косметически изменен с сайта Medium.com,
+//Код был аккуратно взят и слегка косметически изменен с сайта Medium.com,
         //ссылка для поддержки и указания автора:
         //https://medium.com/@meytataliti/android-simple-calendar-with-jetpack-compose-662e4d1794b
 
@@ -45,9 +55,11 @@ import java.util.stream.Stream
 @Preview(showBackground = true)
 @Composable
 fun CalendarAppPreview() {
-    CalendarApp(
-        modifier = Modifier.padding(16.dp)
-    )
+    AlcyonePlusTheme {
+        CalendarApp(
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Composable
@@ -130,6 +142,11 @@ fun Header(
     }
 }
 
+object SelectedDateRepository {
+    var selectedDate: String = ""
+    var selectedWeek: String = ""
+}
+
 @Composable
 fun Content(
     data: CalendarUiModel,
@@ -149,7 +166,9 @@ fun Content(
 @Composable
 fun ContentItem(
     date: CalendarUiModel.Date,
-    onClickListener: (CalendarUiModel.Date) -> Unit,) {
+    onClickListener: (CalendarUiModel.Date) -> Unit,
+    viewModel: MainViewModel = hiltViewModel()
+) {
     Card(
         modifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
@@ -161,6 +180,9 @@ fun ContentItem(
             // background colors of the selected date
             // and the non-selected date are different
             containerColor = if (date.isSelected) {
+                viewModel.updateDay(date.getDayInfo())
+                viewModel.updateWeek(date.getWeekInfo())
+                viewModel.filterData(date.getDayInfo(), date.getWeekInfo())
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.secondary
@@ -201,8 +223,22 @@ data class CalendarUiModel(
         val isToday: Boolean
     ) {
         val day: String = date.format(DateTimeFormatter.ofPattern("E")) // get the day by formatting the date
+
+        fun getDayInfo(): String {
+            val datee = java.util.Date.from(date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
+            val dayOfWeek = SimpleDateFormat("EEEE", ENGLISH).format(datee)
+            return dayOfWeek.uppercase()
+        }
+
+        fun getWeekInfo(): String {
+            val weekFields = WeekFields.ISO
+            val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
+            return if (weekInfo % 2 == 1) { "нечетная" } else { "четная" }
+        }
     }
 }
+
+
 
 class CalendarDataSource {
 
@@ -210,6 +246,7 @@ class CalendarDataSource {
         get() {
             return LocalDate.now()
         }
+
 
 
     fun getData(startDate: LocalDate = today, lastSelectedDate: LocalDate): CalendarUiModel {

@@ -17,12 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mary.alcyoneplus.Data.NewsDto
 import com.mary.compose.AlcyonePlusTheme
 
-data class News(val title: String, val content: String)
-
 @Composable
-fun NewsCard(title: String, content: String) {
+fun NewsCard(newsDto: NewsDto) {
 
     val expanded = remember { mutableStateOf(false) }
     Card(
@@ -36,13 +35,13 @@ fun NewsCard(title: String, content: String) {
                 .padding(6.dp)
         ) {
             Text(
-                text = title,
+                text = newsDto.title,
                 style = MaterialTheme.typography.titleSmall,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = content,
+                text = newsDto.content,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
                     .animateContentSize(
@@ -61,13 +60,10 @@ fun NewsCard(title: String, content: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    AlcyonePlusTheme {
-        NewsCard(
-            title = "Обновление расписания для группы 3842.9",
-            content = "Было обновлено расписание для группы 3842.9, изменения затронули следующие дни: Понедельник, Среду, Пятницу и Субботу."
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    AlcyonePlusTheme {
+//        NewsCard(null)
+//    }
+//}

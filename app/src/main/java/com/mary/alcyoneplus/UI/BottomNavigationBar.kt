@@ -1,5 +1,6 @@
 package com.mary.alcyoneplus.UI
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -67,7 +69,10 @@ fun BottomBar(
     val screens = listOf(
         Destinations.HomeScreen, Destinations.News, Destinations.Info
     )
-    NavigationBar {
+    NavigationBar(
+
+    ) {
+
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
@@ -85,9 +90,9 @@ fun BottomBar(
             }
 
             NavigationBarItem(
-                label = {
-                    Text(text = screen.title!!)
-                },
+//                label = {
+//                    Text(text = screen.title!!)
+//                },
                 icon = {
                     Icon(imageVector = screen.icon!!, contentDescription = "")
                 },

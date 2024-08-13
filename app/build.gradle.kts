@@ -98,7 +98,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:gotrue-kt:2.5.2")
     implementation(platform("io.github.jan-tennert.supabase:bom:2.5.2"))
     implementation("io.ktor:ktor-client-android:2.3.12")
-
+    implementation("androidx.compose.material:material:1.6.8")
 
 
 

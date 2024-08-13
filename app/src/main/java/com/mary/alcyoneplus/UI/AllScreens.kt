@@ -1,5 +1,6 @@
 package com.mary.alcyoneplus.UI
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,17 +18,38 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +66,7 @@ import com.mary.alcyoneplus.Data.NewsDto
 import com.mary.alcyoneplus.Data.TableTestDto
 import com.mary.alcyoneplus.R
 import com.mary.compose.AlcyonePlusTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen() {
@@ -211,12 +234,192 @@ fun SecondTab(
 }
 
 @Composable
+fun appDrawer() {
+    Column {
+        Text("Menu Item 1")
+        Text("Menu Item 2")
+        Text("Menu Item 3")
+    }
+}
+
+//@Composable
+//fun testMainScreen() {
+//    val navController = rememberNavController()
+//    val drawerState = rememberDrawerState(DrawerValue.Closed)
+//    val coroutineScope = rememberCoroutineScope()
+//
+//    ModalNavigationDrawer(
+//        drawerState = drawerState,
+//        drawerContent = {
+//            NavigationDrawerContent(
+//                onDestinationClicked = { route ->
+//                    navController.navigate(route) {
+//                        // Ensure that only one instance of the screen is in the backstack
+//                        popUpTo(navController.graph.findStartDestination().id) {
+//                            saveState = true
+//                        }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                    coroutineScope.launch { drawerState.close() }
+//                }
+//            )
+//        }
+//    ) {
+//        Scaffold(
+//            bottomBar = {
+//                BottomNavigationBar(navController = navController)
+//            }
+//        ) { innerPadding ->
+//            NavHost(
+//                navController = navController,
+//                startDestination = "home",
+//                modifier = Modifier.padding(innerPadding)
+//            ) {
+//                composable("home") { HomeScreen() }
+//                composable("profile") { ProfileScreen() }
+//                composable("settings") { SettingsScreen() }
+//            }
+//        }
+//    }
+//}
+
+@Composable
+fun hostScreen() {
+    MainScreen()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview
+@Composable
+fun navigationDrawer() {
+    ///List of Navigation Items that will be clicked
+    val items = listOf(
+        NavigationItems(
+            title = "Main",
+            selectedIcon = Icons.Filled.Home,
+            unselectedIcon = Icons.Outlined.Home
+        ),
+        NavigationItems(
+            title = "Settings",
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings
+        ),
+        NavigationItems(
+            title = "Faq",
+            selectedIcon = Icons.Filled.Info,
+            unselectedIcon = Icons.Outlined.Info,
+            badgeCount = 105
+        )
+    )
+
+    //Remember Clicked item state
+    var selectedItemIndex by rememberSaveable {
+        mutableStateOf(0)
+    }
+
+//Remember the State of the drawer. Closed/ Opened
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Spacer(modifier = Modifier.height(16.dp))
+                items.forEachIndexed { index, item ->
+                    NavigationDrawerItem(
+                        label = { Text(text = item.title) },
+                        selected = index == selectedItemIndex,
+                        onClick = {
+//                              navController.navigate(item.route)
+
+                            selectedItemIndex = index
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (index == selectedItemIndex) {
+                                    item.selectedIcon
+                                } else item.unselectedIcon,
+                                contentDescription = item.title
+                            )
+                        },
+                        badge = {
+                            item.badgeCount?.let {
+                                Text(text = item.badgeCount.toString())
+                            }
+                        },
+//                        modifier = Modifier
+//                            .padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
+
+            }
+        },
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Alcyone Plus")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            scope.launch {
+                                drawerState.apply {
+                                    if (isClosed) open() else close()
+                                }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu"
+                            )
+                        }
+                    }
+                )
+            }
+        ) {
+            Box(modifier = Modifier.padding(it)) {
+                when (selectedItemIndex) {
+                    0 -> MainScreen()
+                    1 -> popScreen()
+                    2 -> popScreen2()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun popScreen() {
+    Text(text = "popScreen")
+}
+
+@Composable
+fun popScreen2() {
+    Text(text = "popScreen2")
+}
+
+@Composable
+fun popScreen3() {
+    Text(text = "popScreen3")
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
 fun MainScreen() {
     val navController: NavHostController = rememberNavController()
 
     val buttonsVisible = remember { mutableStateOf(true) }
 
     Scaffold(
+
         bottomBar = {
             BottomBar(
                 navController = navController,

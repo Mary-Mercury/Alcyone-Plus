@@ -59,11 +59,3 @@ fun NewsCard(newsDto: NewsDto) {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    AlcyonePlusTheme {
-//        NewsCard(null)
-//    }
-//}

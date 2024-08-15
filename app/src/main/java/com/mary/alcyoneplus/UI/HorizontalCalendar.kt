@@ -115,7 +115,7 @@ fun Header(
                 stringResource(R.string.Today)
             } else {
                 data.selectedDate.date.format(
-                    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
                 )
             },
             modifier = Modifier
@@ -140,11 +140,6 @@ fun Header(
             )
         }
     }
-}
-
-object SelectedDateRepository {
-    var selectedDate: String = ""
-    var selectedWeek: String = ""
 }
 
 @Composable

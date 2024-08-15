@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.mary.alcyoneplus.R
+import com.mary.alcyoneplus.UI.Screens.FirstTab
+import com.mary.alcyoneplus.UI.Screens.SecondTab
 
 @Composable
 fun TabLayout() {

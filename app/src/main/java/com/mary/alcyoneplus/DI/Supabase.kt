@@ -1,6 +1,7 @@
 package com.mary.alcyoneplus.DI
 
 
+import com.mary.alcyoneplus.BuildConfig
 import com.mary.alcyoneplus.Data.NetworkRequests
 import com.mary.alcyoneplus.Data.RepositoryImpl
 import com.mary.alcyoneplus.Data.repository
@@ -25,8 +26,8 @@ object Supabase {
     @Singleton
     fun provideSupabaseClient(): SupabaseClient {
         return createSupabaseClient(
-            supabaseUrl = "https://llltymdulwzpknjqnpgi.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsbHR5bWR1bHd6cGtuanFucGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODgwNzg4MzQsImV4cCI6MjAwMzY1NDgzNH0.K3OMP-StBpmH-LRZqyKozRvqHnBVqGtyiiUXFLIkgyg",
+            supabaseUrl = BuildConfig.URL,
+            supabaseKey = BuildConfig.API_KEY,
         ) {
             install(Postgrest)
             install(Auth)

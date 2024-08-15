@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import com.mary.alcyoneplus.UI.Screens.NavigationDrawer
 import com.mary.compose.AlcyonePlusTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlcyonePlusTheme {
-                hostScreen()
+                NavigationDrawer()
             }
         }
     }

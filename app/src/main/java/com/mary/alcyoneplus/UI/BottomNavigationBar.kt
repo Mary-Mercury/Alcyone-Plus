@@ -1,8 +1,8 @@
 package com.mary.alcyoneplus.UI
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -11,13 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mary.alcyoneplus.R
+import com.mary.alcyoneplus.UI.Screens.HomeScreen
+import com.mary.alcyoneplus.UI.Screens.NewsScreen
 
 
 sealed class Destinations(
@@ -25,10 +26,11 @@ sealed class Destinations(
     var title: String? = null,
     val icon: ImageVector? = null
 ) {
+
     object HomeScreen : Destinations(
         route = "home_screen",
-//        title = "Main",
-        icon = Icons.Default.Home
+//        title = stringResource(id = R.string.homeScreen),
+        icon = Icons.Default.DateRange
     )
 
     object News : Destinations(
@@ -37,11 +39,6 @@ sealed class Destinations(
         icon = Icons.Default.Email
     )
 
-    object Info : Destinations(
-        route = "settings_screen",
-//            title = "Info",
-        icon = Icons.Default.Info
-    )
 }
 
 
@@ -55,9 +52,7 @@ fun NavigationGraph(navController: NavHostController) {
         composable(Destinations.News.route) {
             NewsScreen()
         }
-        composable(Destinations.Info.route) {
-            InfoScreen()
-        }
+
     }
 }
 
@@ -67,7 +62,7 @@ fun BottomBar(
 ) {
 
     val screens = listOf(
-        Destinations.HomeScreen, Destinations.News, Destinations.Info
+        Destinations.HomeScreen, Destinations.News,
     )
     NavigationBar(
 
@@ -79,20 +74,17 @@ fun BottomBar(
         screens.forEach { screen ->
             for (i in screens) {
                 if (i.route == "home_screen") {
-                    i.title = stringResource(R.string.homeScreenBtmNav)
+                    i.title = stringResource(R.string.homeScreen)
                 }
                 if (i.route == "news_screen") {
                     i.title = stringResource(R.string.newsScreenBtmNav)
                 }
-                if (i.route == "settings_screen") {
-                    i.title = stringResource(R.string.infoScreenBtmNav)
-                }
             }
 
             NavigationBarItem(
-//                label = {
-//                    Text(text = screen.title!!)
-//                },
+                label = {
+                    Text(text = screen.title!!)
+                },
                 icon = {
                     Icon(imageVector = screen.icon!!, contentDescription = "")
                 },

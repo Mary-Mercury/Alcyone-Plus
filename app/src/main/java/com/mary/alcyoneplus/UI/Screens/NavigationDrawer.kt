@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
@@ -65,6 +67,11 @@ fun NavigationDrawer() {
             title = title3,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
+        ),
+        NavigationItems(
+            title = "Quiz",
+            selectedIcon = Icons.Filled.Favorite,
+            unselectedIcon = Icons.Outlined.Favorite,
         )
     )
 
@@ -134,11 +141,12 @@ fun NavigationDrawer() {
                 )
             }
         ) {
-            Box(modifier = Modifier.absolutePadding(top = 65.dp)) {
+            Box(modifier = Modifier.absolutePadding(top = 70.dp)) {
                 when (selectedItemIndex) {
                     0 -> MainScreen()
                     1 -> SettingsScreen()
                     2 -> InfoScreen()
+                    3 -> QuizApp()
                 }
             }
         }

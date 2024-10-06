@@ -108,6 +108,10 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
 
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-preferences-core:1.1.1")
+
+
 //    доп имплы для внедрения авторизации
 //    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 //    implementation ("androidx.activity:activity-compose:1.8.2")

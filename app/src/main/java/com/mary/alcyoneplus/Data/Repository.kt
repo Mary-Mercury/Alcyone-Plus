@@ -8,6 +8,8 @@ interface repository {
     fun getNews(): Flow<ApiResult<List<NewsDto>>>
 
     fun getExampleFlowTest(): Flow<ApiResult<List<TableTestDto>>>
+
+    fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>>
 }
 
 class RepositoryImpl @Inject constructor(
@@ -20,6 +22,10 @@ class RepositoryImpl @Inject constructor(
 
     override fun getExampleFlowTest(): Flow<ApiResult<List<TableTestDto>>> {
         return source.getExampleFlowTest()
+    }
+
+    override fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>> {
+        return source.getSchedule2111()
     }
 }
 

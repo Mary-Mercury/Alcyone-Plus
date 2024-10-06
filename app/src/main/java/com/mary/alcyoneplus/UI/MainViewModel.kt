@@ -16,12 +16,37 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.runtime.State
 import com.mary.alcyoneplus.Data.TableTestDto
+import com.mary.alcyoneplus.utils.DataStoreManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: repository
+    private val repository: repository,
+    private val settingsDataStore: DataStoreManager
 ): ViewModel() {
+
+    val switchState: StateFlow<Boolean> = settingsDataStore.switchFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    fun saveSwitchState(isEnabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.saveSwitchState(isEnabled)
+        }
+    }
+
+    val selectedItem: StateFlow<Int> = settingsDataStore.selectedItemFlow
+        .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
+
+    fun saveSelectedItem(itemIndex: Int) {
+        viewModelScope.launch {
+            settingsDataStore.saveSelectedItem(itemIndex)
+        }
+    }
+
 
     //для получения данных для новостей
     private val _news = MutableStateFlow<ApiResult<List<NewsDto>>>(ApiResult.Loading)
@@ -29,17 +54,12 @@ class MainViewModel @Inject constructor(
 
     //для получения расписания
     private val _exampleFlowTest = MutableStateFlow<ApiResult<List<TableTestDto>>>(ApiResult.Loading)
-    val exampleFlowTest: StateFlow<ApiResult<List<TableTestDto>>> get() = _exampleFlowTest
 
     //для обмена данных выбранного дня
     private val _selectedDay = mutableStateOf<String>("")
-    val selectedDay: State<String> get() = _selectedDay
-    val Day: String = selectedDay.value
 
     //для обмена данных выбранной недели
     private val _selectedWeek = mutableStateOf<String>("")
-    val selectedWeek: State<String> get() = _selectedWeek
-    val dayOfWeek: String = selectedWeek.value
 
 
 
@@ -49,9 +69,9 @@ class MainViewModel @Inject constructor(
 
     fun filterData(selectDay: String, selectWeek: String) {
         var dayOfWeek = selectDay
-        Log.e("ApiResult", dayOfWeek)
+//        Log.e("ApiResult", dayOfWeek)
         var numOfWeek = selectWeek
-        Log.e("ApiResult", numOfWeek)
+//        Log.e("ApiResult", numOfWeek)
         viewModelScope.launch {
             _exampleFlowTest.collect { apiResult ->
                 when (apiResult) {
@@ -90,7 +110,33 @@ class MainViewModel @Inject constructor(
     //инициализация выборки данных
     init {
         fetchNews()
-        fetchExampleFlowTest()
+        observeSelectedItem()
+    }
+
+    private fun observeSelectedItem() {
+        // Подписка на изменения выбранного элемента
+        viewModelScope.launch {
+            settingsDataStore.selectedItemFlow.collectLatest { selectedItem ->
+                fetchTables(selectedItem)
+            }
+        }
+    }
+
+    fun fetchTables(selectedItem: Int) {
+        viewModelScope.launch {
+            when( selectedItem) {
+                0 -> {
+                    repository.getExampleFlowTest().collectLatest { data ->
+                        _exampleFlowTest.update { data }
+                    }
+                }
+                1 -> {
+                    repository.getSchedule2111().collectLatest { data ->
+                        _exampleFlowTest.update { data }
+                    }
+                }
+            }
+        }
     }
 
     fun fetchNews() {
@@ -98,14 +144,6 @@ class MainViewModel @Inject constructor(
             repository.getNews().collectLatest { data ->
                 _news.update { data }
                 Log.e("TAGss", "getNews: $_news")
-            }
-        }
-    }
-
-    fun fetchExampleFlowTest() {
-        viewModelScope.launch {
-            repository.getExampleFlowTest().collectLatest { data ->
-                _exampleFlowTest.update { data }
             }
         }
     }

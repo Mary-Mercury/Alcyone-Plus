@@ -1,7 +1,3 @@
-package com.mary.alcyoneplus.UI
-
-import android.text.format.DateUtils
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mary.alcyoneplus.R
+import com.mary.alcyoneplus.UI.MainViewModel
 import com.mary.compose.AlcyonePlusTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -41,10 +39,7 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import java.text.SimpleDateFormat
 import java.time.temporal.WeekFields
-import java.util.Calendar
 import java.util.Locale.ENGLISH
-import java.util.Date
-import java.util.Locale
 
 
 //Код был аккуратно взят и слегка косметически изменен с сайта Medium.com,
@@ -175,9 +170,18 @@ fun ContentItem(
             // background colors of the selected date
             // and the non-selected date are different
             containerColor = if (date.isSelected) {
-                viewModel.updateDay(date.getDayInfo())
-                viewModel.updateWeek(date.getWeekInfo())
-                viewModel.filterData(date.getDayInfo(), date.getWeekInfo())
+
+                val switchState by viewModel.switchState.collectAsState()
+
+                if (switchState) {
+                    viewModel.updateDay(date.getDayInfo())
+                    viewModel.updateWeek(date.getWeekInfoInverted())
+                    viewModel.filterData(date.getDayInfo(), date.getWeekInfoInverted())
+                } else {
+                    viewModel.updateDay(date.getDayInfo())
+                    viewModel.updateWeek(date.getWeekInfo())
+                    viewModel.filterData(date.getDayInfo(), date.getWeekInfo())
+                }
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.secondary
@@ -206,7 +210,7 @@ fun ContentItem(
 
 data class CalendarUiModel(
     val selectedDate: Date, // the date selected by the User. by default is Today.
-    val visibleDates: List<Date> // the dates shown on the screen
+    val visibleDates: List<Date>, // the dates shown on the screen
 ) {
 
     val startDate: Date = visibleDates.first() // the first of the visible dates
@@ -215,14 +219,21 @@ data class CalendarUiModel(
     data class Date(
         val date: LocalDate,
         val isSelected: Boolean,
-        val isToday: Boolean
+        val isToday: Boolean,
     ) {
+
         val day: String = date.format(DateTimeFormatter.ofPattern("E")) // get the day by formatting the date
 
         fun getDayInfo(): String {
             val datee = java.util.Date.from(date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
             val dayOfWeek = SimpleDateFormat("EEEE", ENGLISH).format(datee)
             return dayOfWeek.uppercase()
+        }
+
+        fun getWeekInfoInverted(): String {
+            val weekFields = WeekFields.ISO
+            val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
+            return if (weekInfo % 2 == 1) { "четная" } else { "нечетная" }
         }
 
         fun getWeekInfo(): String {
@@ -273,9 +284,9 @@ class CalendarDataSource {
     }
 
     private fun toItemUiModel(date: LocalDate, isSelectedDate: Boolean) = CalendarUiModel.Date(
-        isSelected = isSelectedDate,
-        isToday = date.isEqual(today),
         date = date,
+        isSelected = isSelectedDate,
+        isToday = date.isEqual(today)
     )
 }
 

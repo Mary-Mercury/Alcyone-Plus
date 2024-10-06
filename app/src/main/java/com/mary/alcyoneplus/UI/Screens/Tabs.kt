@@ -28,7 +28,7 @@ fun FirstTab(
         }
         is ApiResult.Success -> {
             val newsList = (newsState as ApiResult.Success<List<TableTestDto>>).data
-            val lastSixItems = newsList.take(6)
+            val lastSixItems = newsList.filter { it.subGroup == "1" }
             LazyColumn {
                 items(lastSixItems) { news ->
                     ScheduleCard(news)
@@ -54,7 +54,7 @@ fun SecondTab(
         }
         is ApiResult.Success -> {
             val newsList = (newsState as ApiResult.Success<List<TableTestDto>>).data
-            val lastSixItems = newsList.takeLast(6)
+            val lastSixItems = newsList.filter { it.subGroup == "2" }
             LazyColumn {
                 items(lastSixItems) { news ->
                     ScheduleCard(news)

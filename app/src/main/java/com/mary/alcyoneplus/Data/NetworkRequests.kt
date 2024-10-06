@@ -39,6 +39,21 @@ class NetworkRequests @Inject constructor(
             }
         }
     }
+
+    fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>> {
+        return flow {
+            emit(ApiResult.Loading)
+            try {
+                val result = postgrest["Schedule2111"]
+                    .select {
+                        order("id", Order.ASCENDING)
+                    }.decodeList<TableTestDto>()
+                emit(ApiResult.Success(result))
+                } catch (e: Exception) {
+                emit(ApiResult.Error(e.message))
+            }
+        }
+    }
 }
 
 

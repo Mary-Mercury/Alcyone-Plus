@@ -1,15 +1,14 @@
 package com.mary.alcyoneplus.UI.Screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -20,10 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mary.alcyoneplus.R
 import com.mary.alcyoneplus.UI.MainViewModel
 import com.mary.compose.AlcyonePlusTheme
+import java.time.temporal.WeekFields
+import java.time.LocalDate
+
 
 @Composable
 fun SettingsScreen(
@@ -53,7 +53,8 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .absolutePadding(top = 20.dp, left = 6.dp, right = 6.dp)
+            .statusBarsPadding()
+            .absolutePadding(left = 6.dp, right = 6.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -121,9 +122,35 @@ fun SettingsScreen(
                 }
             }
             Text(
-                text = ("Select your study group to get the current schedule."),
+                text = stringResource(R.string.selectGroup),
                 fontSize = 16.sp)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val oddWeek = stringResource(R.string.odd_week)
+            val evenWeek = stringResource(R.string.even_numbered)
+            val switchState by viewModel.switchState.collectAsState()
+
+            var date: LocalDate = LocalDate.now()
+            fun getWeekInfoInverted(): String {
+                val weekFields = WeekFields.ISO
+                val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
+                return if (weekInfo % 2 == 1) { evenWeek } else { oddWeek }
+            }
+
+            fun getWeekInfo(): String {
+                val weekFields = WeekFields.ISO
+                val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
+                return if (weekInfo % 2 == 1) { oddWeek } else { evenWeek }
+            }
+            val week = if (switchState) { getWeekInfoInverted() } else { getWeekInfo() }
+            Text(
+                text = stringResource(R.string.week) + " " + week)
+            }
         }
     }
 

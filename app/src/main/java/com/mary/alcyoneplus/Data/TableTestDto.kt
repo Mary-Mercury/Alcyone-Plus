@@ -12,5 +12,6 @@ data class TableTestDto(
     @SerialName("subgroup") val subGroup: String,
     @SerialName("parity") val parity: String,
     @SerialName("time") val time: String,
-    @SerialName("day") val day: String
+    @SerialName("day") val day: String,
+    @SerialName("type") val type: String? = null
 )

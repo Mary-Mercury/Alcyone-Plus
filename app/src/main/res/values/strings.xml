@@ -23,4 +23,8 @@
     <string name="newsScreenBtmNav">News</string>
     <string name="infoScreenBtmNav">Info</string>
     <string name="homeScreenBtmNav">Main</string>
+    <string name="selectGroup">Select your study group to get the current schedule.</string>
+    <string name="week">Current week: </string>
+    <string name="even_numbered">even-numbered week</string>
+    <string name="odd_week">odd week</string>
 </resources>

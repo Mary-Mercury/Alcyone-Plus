@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
@@ -29,8 +30,9 @@ fun InfoScreen() {
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .fillMaxSize()
+                .statusBarsPadding()
 //                    .padding(16.dp)
-                .absolutePadding(top = 20.dp, left = 6.dp, right = 6.dp)
+                .absolutePadding(left = 6.dp, right = 6.dp)
         ) {
 
 

@@ -24,4 +24,8 @@
     <string name="homeScreenBtmNav">Главная</string>
     <string name="newsScreenBtmNav">Новости</string>
     <string name="infoScreenBtmNav">Информация</string>
+    <string name="selectGroup">Выберите свою учебную группу, чтобы получать актуальное расписание.</string>
+    <string name="week">Текущая неделя: </string>
+    <string name="even_numbered">Четная</string>
+    <string name="odd_week">Нечетная</string>
 </resources>

@@ -25,6 +25,7 @@ class DataStoreManager @Inject constructor(
     companion object {
         val SWITCH_KEY = booleanPreferencesKey("switch_key")
         val SELECTED_ITEM_KEY = intPreferencesKey("selected_item_key")
+        val SELECTED_TAB = intPreferencesKey("selected_tab")
     }
 
     val switchFlow: Flow<Boolean> = context.dataStore.data
@@ -53,4 +54,16 @@ class DataStoreManager @Inject constructor(
         .map { preferences ->
             preferences[SELECTED_ITEM_KEY] ?: 0
         }
+
+
+    val getSelectedTab: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[SELECTED_TAB] ?: 0
+        }
+
+    suspend fun saveSelectedTab(tab: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[SELECTED_TAB] = tab
+        }
+    }
 }

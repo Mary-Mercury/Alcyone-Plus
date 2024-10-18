@@ -14,10 +14,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.compose.runtime.State
 import com.mary.alcyoneplus.Data.TableTestDto
 import com.mary.alcyoneplus.utils.DataStoreManager
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
@@ -28,19 +26,18 @@ class MainViewModel @Inject constructor(
     private val settingsDataStore: DataStoreManager
 ): ViewModel() {
 
+
     val switchState: StateFlow<Boolean> = settingsDataStore.switchFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
-
     fun saveSwitchState(isEnabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.saveSwitchState(isEnabled)
         }
     }
 
+
     val selectedItem: StateFlow<Int> = settingsDataStore.selectedItemFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
-
-
     fun saveSelectedItem(itemIndex: Int) {
         viewModelScope.launch {
             settingsDataStore.saveSelectedItem(itemIndex)
@@ -56,10 +53,10 @@ class MainViewModel @Inject constructor(
     private val _exampleFlowTest = MutableStateFlow<ApiResult<List<TableTestDto>>>(ApiResult.Loading)
 
     //для обмена данных выбранного дня
-    private val _selectedDay = mutableStateOf<String>("")
+    private val _selectedDay = mutableStateOf("")
 
     //для обмена данных выбранной недели
-    private val _selectedWeek = mutableStateOf<String>("")
+    private val _selectedWeek = mutableStateOf("")
 
 
 
@@ -122,7 +119,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun fetchTables(selectedItem: Int) {
+    private fun fetchTables(selectedItem: Int) {
         viewModelScope.launch {
             when( selectedItem) {
                 0 -> {
@@ -139,7 +136,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun fetchNews() {
+    private fun fetchNews() {
         viewModelScope.launch {
             repository.getNews().collectLatest { data ->
                 _news.update { data }

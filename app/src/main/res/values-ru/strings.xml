@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Alcyone Plus</string>
-    <string name="settingsScreen">Экран настроек</string>
+    <string name="settingsScreen">Настройки</string>
     <string name="newsScreen">Экран новостей</string>
-    <string name="homeScreen">Домашнаяя</string>
+    <string name="homeScreen">Расписание</string>
     <string name="firstTab">Первая вкладка</string>
     <string name="secondTab">Вторая вкладка</string>
     <string name="Back">Назад</string>
@@ -23,5 +23,9 @@
     <string name="alternativeMode">Включите, если четность не совпадает с вашим учебным расписанием. Рекомендуется перезапустить приложение для применения настроек.</string>
     <string name="homeScreenBtmNav">Главная</string>
     <string name="newsScreenBtmNav">Новости</string>
-    <string name="infoScreenBtmNav">Инфо</string>
+    <string name="infoScreenBtmNav">Информация</string>
+    <string name="selectGroup">Выберите свою учебную группу, чтобы получать актуальное расписание.</string>
+    <string name="week">Текущая неделя: </string>
+    <string name="even_numbered">Четная</string>
+    <string name="odd_week">Нечетная</string>
 </resources>

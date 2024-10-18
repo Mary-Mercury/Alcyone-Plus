@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Alcyone Plus</string>
-    <string name="settingsScreen">Settings Screen</string>
+    <string name="settingsScreen">Settings</string>
     <string name="newsScreen">News Screen</string>
-    <string name="homeScreen">Home Screen</string>
+    <string name="homeScreen">Schedule</string>
     <string name="firstTab">First Tab</string>
     <string name="secondTab">Second Tab</string>
     <string name="Back">Back</string>
@@ -20,7 +20,11 @@
     <string name="contactTitle">Connection</string>
     <string name="alternativeModeTitle">Alternative mode</string>
     <string name="alternativeMode">Turn it on if the parity doesnt match your study schedule. It is recommended to restart the application to apply the settings.</string>
-    <string name="homeScreenBtmNav">Main</string>
     <string name="newsScreenBtmNav">News</string>
     <string name="infoScreenBtmNav">Info</string>
+    <string name="homeScreenBtmNav">Main</string>
+    <string name="selectGroup">Select your study group to get the current schedule.</string>
+    <string name="week">Current week: </string>
+    <string name="even_numbered">even-numbered week</string>
+    <string name="odd_week">odd week</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.mary.alcyoneplus.UI
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,15 +16,24 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mary.alcyoneplus.Data.TableTestDto
+import com.mary.alcyoneplus.Data.userState
 import com.mary.alcyoneplus.utils.DataStoreManager
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import androidx.compose.runtime.State
+import com.mary.alcyoneplus.utils.sharedprefForReg
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.gotrue.signInAnonymously
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: repository,
-    private val settingsDataStore: DataStoreManager
+    private val settingsDataStore: DataStoreManager,
+    private val supabaseClient: SupabaseClient,
+    private val sharedPrefForReg: sharedprefForReg
 ): ViewModel() {
 
 
@@ -144,4 +154,109 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+//================================================================================================\\
+
+//
+    private val _userState = mutableStateOf<userState>(userState.Loading)
+    val userStateLD: State<userState> = _userState
+//
+//    //функция регистарции
+    fun signUp(
+        context: Context,
+        userEmail: String,
+        userPassword: String
+    ) {
+        viewModelScope.launch {
+            try {
+                supabaseClient.auth.signUpWith(Email) {
+                    email = userEmail
+                    password = userPassword
+                }
+                saveToken(context = context)
+                _userState.value = userState.Success("Registered user successfully!")
+            } catch (e: Exception) {
+                _userState.value = userState.Error("Error: ${e.message}")
+            }
+        }
+    }
+//
+    fun anonymousLogin(context: Context,) {
+        viewModelScope.launch {
+            try {
+                supabaseClient.auth.currentUserOrNull()
+                saveToken(context = context)
+                _userState.value = userState.Success("Logged user successfully!")
+                Log.d("login", "авторизация  аноним успешно")
+            } catch (e: Exception) {
+                _userState.value = userState.Error("Error: ${e.message}")
+            }
+        }
+    }
+//
+//    //функция входа в систему
+    fun login(
+        context: Context,
+        userEmail: String,
+        userPassword: String
+    ) {
+        viewModelScope.launch {
+            try {
+                supabaseClient.auth.signInWith(Email) {
+                    email = userEmail
+                    password = userPassword
+                }
+                saveToken(context = context)
+                _userState.value = userState.Success("Logged user successfully!")
+                Log.d("login", "авторизация успешно")
+            } catch (e: Exception) {
+                _userState.value = userState.Error("Error: ${e.message}")
+            }
+        }
+    }
+//
+//    //функция выхода из системы
+    fun logout(context: Context) {
+        viewModelScope.launch {
+            _userState.value = userState.Loading
+            try {
+                supabaseClient.auth.signOut()
+                sharedPrefForReg.clearPreferences()
+                _userState.value = userState.Success("Logged out successfully!")
+            } catch (e: Exception) {
+                _userState.value = userState.Error("Error: ${e.message}")
+            }
+        }
+    }
+//
+//    //проверка, зашел ли пользователь в систему ранее
+    fun isUserLoggedIn(context: Context) {
+        viewModelScope.launch{
+            try {
+                val token = getToken(context)
+                if (token.isNullOrEmpty()) {
+                    _userState.value = userState.Error("User is not Logged in!")
+                } else {
+                    supabaseClient.auth.retrieveUser(token)
+                    supabaseClient.auth.refreshCurrentSession()
+                    saveToken(context = context)
+                    _userState.value = userState.Success("User is already logged in!")
+                }
+            } catch (e: Exception) {
+                _userState.value = userState.Error("Error: ${e.message}")
+            }
+        }
+    }
+//
+private fun saveToken(context: Context) {
+    viewModelScope.launch {
+        val accessToken = supabaseClient.auth.currentAccessTokenOrNull() ?: ""
+        sharedPrefForReg.saveStringData("accessToken", accessToken)
+    }
+}
+
+    fun getToken(context: Context): String? {
+        return sharedPrefForReg.getStringData("accessToken")
+    }
+
 }

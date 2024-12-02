@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ class DataStoreManager @Inject constructor(
         val SWITCH_KEY = booleanPreferencesKey("switch_key")
         val SELECTED_ITEM_KEY = intPreferencesKey("selected_item_key")
         val SELECTED_TAB = intPreferencesKey("selected_tab")
+        private val TOKEN_KEY = stringPreferencesKey("registration_token")
     }
 
     val switchFlow: Flow<Boolean> = context.dataStore.data
@@ -65,5 +67,24 @@ class DataStoreManager @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[SELECTED_TAB] = tab
         }
+    }
+
+
+    // Функция для сохранения токена
+    suspend fun saveToken(token: String) {
+        context.dataStore.edit { preferences ->
+            preferences[TOKEN_KEY] = token
+        }
+    }
+
+    // Функция для получения токена
+    val token: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[TOKEN_KEY]
+        }
+
+    // Функция для очистки всех данных
+    suspend fun clearPreferences() {
+        context.dataStore.edit { it.clear() }
     }
 }

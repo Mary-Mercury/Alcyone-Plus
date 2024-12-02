@@ -7,6 +7,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
     kotlin("plugin.serialization") version "1.8.21"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -79,6 +80,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -111,11 +113,16 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-preferences-core:1.1.1")
 
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation ("androidx.compose.material:material-icons-extended:1.6.5")
+
 
 //    доп имплы для внедрения авторизации
-//    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-//    implementation ("androidx.activity:activity-compose:1.8.2")
-//    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.2.3")
-//    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation ("androidx.activity:activity-compose:1.8.2")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.2.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 }
 

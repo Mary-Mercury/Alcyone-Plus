@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mary.alcyoneplus.R
+import com.mary.compose.AlcyonePlusTheme
 
 @Composable
 fun DropDownDemo() {
@@ -76,10 +77,12 @@ fun DropDownDemo() {
 @Preview(showBackground = true)
 @Composable
 fun DropDownDemoPreview() {
+    AlcyonePlusTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             DropDownDemo()
         }
+    }
 }

@@ -13,5 +13,6 @@ data class TableTestDto(
     @SerialName("parity") val parity: String,
     @SerialName("time") val time: String,
     @SerialName("day") val day: String,
-    @SerialName("type") val type: String? = null
+    @SerialName("type") val type: String? = null,
+    @SerialName("note") val note: String? = null
 )

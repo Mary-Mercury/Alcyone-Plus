@@ -10,6 +10,8 @@ interface repository {
     fun getExampleFlowTest(): Flow<ApiResult<List<TableTestDto>>>
 
     fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>>
+
+    fun getSchedule2111YEXP(): Flow<ApiResult<List<ScheduleDtoEXP>>>
 }
 
 class RepositoryImpl @Inject constructor(
@@ -26,6 +28,10 @@ class RepositoryImpl @Inject constructor(
 
     override fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>> {
         return source.getSchedule2111()
+    }
+
+    override fun getSchedule2111YEXP(): Flow<ApiResult<List<ScheduleDtoEXP>>> {
+        return source.getSchedule2111YEXP()
     }
 }
 

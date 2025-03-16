@@ -41,12 +41,6 @@ import java.text.SimpleDateFormat
 import java.time.temporal.WeekFields
 import java.util.Locale.ENGLISH
 
-
-//Код был аккуратно взят и слегка косметически изменен с сайта Medium.com,
-        //ссылка для поддержки и указания автора:
-        //https://medium.com/@meytataliti/android-simple-calendar-with-jetpack-compose-662e4d1794b
-
-
 @Preview(showBackground = true)
 @Composable
 fun CalendarAppPreview() {
@@ -60,7 +54,6 @@ fun CalendarAppPreview() {
 @Composable
 fun CalendarApp(modifier: Modifier = Modifier) {
     val dataSource = CalendarDataSource()
-    // we use `mutableStateOf` and `remember` inside composable function to schedules recomposition
     var calendarUiModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
 
     Column(
@@ -69,21 +62,15 @@ fun CalendarApp(modifier: Modifier = Modifier) {
         Header(
             data = calendarUiModel,
             onPrevClickListener = { startDate ->
-                // refresh the CalendarUiModel with new data
-                // by get data with new Start Date (which is the startDate-1 from the visibleDates)
                 val finalStartDate = startDate.minusDays(1)
                 calendarUiModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarUiModel.selectedDate.date)
             },
             onNextClickListener = { endDate ->
-                // refresh the CalendarUiModel with new data
-                // by get data with new Start Date (which is the endDate+2 from the visibleDates)
                 val finalStartDate = endDate.plusDays(2)
                 calendarUiModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarUiModel.selectedDate.date)
             }
         )
         Content(data = calendarUiModel, onDateClickListener = { date ->
-            // refresh the CalendarUiModel with new data
-            // by changing only the `selectedDate` with the date selected by User
             calendarUiModel = calendarUiModel.copy(
                 selectedDate = date,
                 visibleDates = calendarUiModel.visibleDates.map {
@@ -104,8 +91,6 @@ fun Header(
     Row {
 
         Text(
-            // show "Today" if user selects today's date
-            // else, show the full format of the date
             text = if (data.selectedDate.isToday) {
                 stringResource(R.string.Today)
             } else {
@@ -140,7 +125,6 @@ fun Header(
 @Composable
 fun Content(
     data: CalendarUiModel,
-    // callback should be registered from outside
     onDateClickListener: (CalendarUiModel.Date) -> Unit,
 ) {
     LazyRow {
@@ -162,13 +146,11 @@ fun ContentItem(
     Card(
         modifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
-            .clickable { // making the element clickable, by adding 'clickable' modifier
+            .clickable {
                 onClickListener(date)
             }
         ,
         colors = CardDefaults.cardColors(
-            // background colors of the selected date
-            // and the non-selected date are different
             containerColor = if (date.isSelected) {
 
                 val switchState by viewModel.switchState.collectAsState()
@@ -195,12 +177,12 @@ fun ContentItem(
                 .padding(8.dp)
         ) {
             Text(
-                text = date.day, // day "Mon", "Tue"
+                text = date.day,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = date.date.dayOfMonth.toString(), // date "15", "16"
+                text = date.date.dayOfMonth.toString(),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -209,33 +191,29 @@ fun ContentItem(
 }
 
 data class CalendarUiModel(
-    val selectedDate: Date, // the date selected by the User. by default is Today.
-    val visibleDates: List<Date>, // the dates shown on the screen
+    val selectedDate: Date,
+    val visibleDates: List<Date>,
 ) {
-
-    val startDate: Date = visibleDates.first() // the first of the visible dates
-    val endDate: Date = visibleDates.last() // the last of the visible dates
+    val startDate: Date = visibleDates.first()
+    val endDate: Date = visibleDates.last()
 
     data class Date(
         val date: LocalDate,
         val isSelected: Boolean,
         val isToday: Boolean,
     ) {
-
-        val day: String = date.format(DateTimeFormatter.ofPattern("E")) // get the day by formatting the date
+        val day: String = date.format(DateTimeFormatter.ofPattern("E"))
 
         fun getDayInfo(): String {
             val datee = java.util.Date.from(date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
             val dayOfWeek = SimpleDateFormat("EEEE", ENGLISH).format(datee)
             return dayOfWeek.uppercase()
         }
-
         fun getWeekInfoInverted(): String {
             val weekFields = WeekFields.ISO
             val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
             return if (weekInfo % 2 == 1) { "четная" } else { "нечетная" }
         }
-
         fun getWeekInfo(): String {
             val weekFields = WeekFields.ISO
             val weekInfo = date.get(weekFields.weekOfWeekBasedYear())
@@ -244,33 +222,26 @@ data class CalendarUiModel(
     }
 }
 
-
-
 class CalendarDataSource {
 
     val today: LocalDate
         get() {
             return LocalDate.now()
         }
-
-
-
     fun getData(startDate: LocalDate = today, lastSelectedDate: LocalDate): CalendarUiModel {
         val firstDayOfWeek = startDate.with(DayOfWeek.MONDAY)
         val endDayOfWeek = firstDayOfWeek.plusDays(7)
         val visibleDates = getDatesBetween(firstDayOfWeek, endDayOfWeek)
         return toUiModel(visibleDates, lastSelectedDate)
     }
-
     private fun getDatesBetween(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
         val numOfDays = ChronoUnit.DAYS.between(startDate, endDate)
         return Stream.iterate(startDate) { date ->
-            date.plusDays(/* daysToAdd = */ 1)
+            date.plusDays( 1)
         }
             .limit(numOfDays)
             .collect(Collectors.toList())
     }
-
     private fun toUiModel(
         dateList: List<LocalDate>,
         lastSelectedDate: LocalDate
@@ -282,12 +253,9 @@ class CalendarDataSource {
             },
         )
     }
-
     private fun toItemUiModel(date: LocalDate, isSelectedDate: Boolean) = CalendarUiModel.Date(
         date = date,
         isSelected = isSelectedDate,
         isToday = date.isEqual(today)
     )
 }
-
-

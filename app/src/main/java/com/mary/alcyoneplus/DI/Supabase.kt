@@ -1,13 +1,19 @@
 package com.mary.alcyoneplus.DI
 
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import com.mary.alcyoneplus.BuildConfig
 import com.mary.alcyoneplus.Data.NetworkRequests
 import com.mary.alcyoneplus.Data.RepositoryImpl
 import com.mary.alcyoneplus.Data.repository
+import com.mary.alcyoneplus.utils.DataStoreManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -46,6 +52,18 @@ object Supabase {
         source: NetworkRequests
     ): repository {
         return RepositoryImpl(source)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(
+        @ApplicationContext context: Context
+    ) = DataStoreManager(context)
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(application: Application): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(application)
     }
 }
 

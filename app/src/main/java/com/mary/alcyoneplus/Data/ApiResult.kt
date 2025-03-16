@@ -5,3 +5,4 @@ sealed class ApiResult<out R> {
     data class Error(val message: String?): ApiResult<Nothing>()
     object Loading : ApiResult<Nothing>()
 }
+

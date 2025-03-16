@@ -1,5 +1,6 @@
 package com.mary.alcyoneplus.Data
 
+import com.google.android.gms.common.api.Api
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,21 @@ import javax.inject.Inject
 class NetworkRequests @Inject constructor(
     private val postgrest: Postgrest
 ) {
+
+    fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>> {
+        return flow {
+            emit(ApiResult.Loading)
+            try {
+                val result = postgrest["Schedule2111"]
+                    .select {
+                        order("id", Order.ASCENDING)
+                    }.decodeList<TableTestDto>()
+                emit(ApiResult.Success(result))
+            } catch (e: Exception) {
+                emit(ApiResult.Error(e.message))
+            }
+        }
+    }
 
     fun getNews(): Flow<ApiResult<List<NewsDto>>> {
         return flow {
@@ -40,16 +56,16 @@ class NetworkRequests @Inject constructor(
         }
     }
 
-    fun getSchedule2111(): Flow<ApiResult<List<TableTestDto>>> {
+    fun getSchedule2111YEXP(): Flow<ApiResult<List<ScheduleDtoEXP>>> {
         return flow {
             emit(ApiResult.Loading)
             try {
-                val result = postgrest["Schedule2111"]
+                val result = postgrest["Schedule2111Y"]
                     .select {
                         order("id", Order.ASCENDING)
-                    }.decodeList<TableTestDto>()
+                    }.decodeList<ScheduleDtoEXP>()
                 emit(ApiResult.Success(result))
-                } catch (e: Exception) {
+            } catch (e: Exception) {
                 emit(ApiResult.Error(e.message))
             }
         }

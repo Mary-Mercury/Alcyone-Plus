@@ -1,6 +1,7 @@
 import java.util.Properties
 
 plugins {
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
@@ -12,14 +13,14 @@ plugins {
 
 android {
     namespace = "com.mary.alcyoneplus"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.mary.alcyoneplus"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.2"
 
 
         val localProperties = Properties()
@@ -118,6 +119,9 @@ dependencies {
 
     implementation ("androidx.compose.material:material-icons-extended:1.6.5")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.30.1")
 
 //    доп имплы для внедрения авторизации
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")

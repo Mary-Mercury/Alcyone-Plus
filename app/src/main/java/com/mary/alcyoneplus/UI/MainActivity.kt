@@ -1,50 +1,48 @@
 package com.mary.alcyoneplus.UI
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.mary.alcyoneplus.UI.Screens.DropDownDemo
-import com.mary.alcyoneplus.UI.Screens.MainScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.mary.alcyoneplus.UI.Screens.NavigationDrawer
+import com.mary.alcyoneplus.UI.Screens.WelcomeScreen
 import com.mary.compose.AlcyonePlusTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             AlcyonePlusTheme {
-                NavigationDrawer()
+                Navigation()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    AlcyonePlusTheme {
-        Greeting("Android")
+fun Navigation() {
+    val navController = rememberNavController()
+    val viewModel: MainViewModel = hiltViewModel()
+    val isFirstLaunch = viewModel.isFirstLaunch
+    val initialScreen = if(!isFirstLaunch) { "onboarding" } else { "final" }
+
+    NavHost(
+        navController = navController,
+        startDestination = initialScreen
+    ) {
+        composable("onboarding") { WelcomeScreen(navController)
+            { viewModel.saveFirstLaunch("saveFirstLaunch",true)  } }
+        composable("final") { NavigationDrawer(navController) }
     }
 }

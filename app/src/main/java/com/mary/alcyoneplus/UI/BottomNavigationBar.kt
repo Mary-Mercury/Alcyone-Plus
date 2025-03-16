@@ -38,7 +38,6 @@ sealed class Destinations(
 //        title = "News",
         icon = Icons.Default.Email
     )
-
 }
 
 
@@ -52,7 +51,6 @@ fun NavigationGraph(navController: NavHostController) {
         composable(Destinations.News.route) {
             NewsScreen()
         }
-
     }
 }
 
@@ -67,7 +65,6 @@ fun BottomBar(
     NavigationBar(
 
     ) {
-
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

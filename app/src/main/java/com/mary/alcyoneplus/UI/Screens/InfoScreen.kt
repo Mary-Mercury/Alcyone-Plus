@@ -24,19 +24,14 @@ import com.mary.alcyoneplus.R
 @Composable
 fun InfoScreen() {
     val scrollState = rememberScrollState()
-
     Surface {
         Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .fillMaxSize()
                 .statusBarsPadding()
-//                    .padding(16.dp)
                 .absolutePadding(left = 6.dp, right = 6.dp)
         ) {
-
-
-            // Text sections
             TextSection(
                 title = stringResource(R.string.howItWorkTitle),
                 content = stringResource(R.string.howItWork)
@@ -64,7 +59,6 @@ fun InfoScreen() {
         }
     }
 }
-
 
 @Composable
 fun TextSection(title: String, content: String) {

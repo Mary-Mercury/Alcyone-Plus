@@ -39,16 +39,9 @@ fun SettingsScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val switchState by viewModel.switchState.collectAsState()
-
-    val isDropDownExpanded = remember {
-        mutableStateOf(false)
-    }
-
+    val isDropDownExpanded = remember { mutableStateOf(false) }
     val selectedItem by viewModel.selectedItem.collectAsState()
-
-
-    val usernames = listOf("3842", "2111")
-
+    val usernames = listOf("3842", "2111", "2111-У")
 
     Column(
         modifier = Modifier
@@ -107,7 +100,8 @@ fun SettingsScreen(
                         expanded = isDropDownExpanded.value,
                         onDismissRequest = {
                             isDropDownExpanded.value = false
-                        }) {
+                        }
+                    ) {
                         usernames.forEachIndexed { index, username ->
                             DropdownMenuItem(text = {
                                 Text(text = username)

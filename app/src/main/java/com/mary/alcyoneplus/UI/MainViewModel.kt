@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mary.alcyoneplus.Data.ApiResult
 import com.mary.alcyoneplus.Data.NewsDto
 import com.mary.alcyoneplus.Data.ScheduleDtoEXP
+import com.mary.alcyoneplus.Data.ScheduleOfflineRepository
 import com.mary.alcyoneplus.Data.repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,9 +18,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.mary.alcyoneplus.Data.TableTestDto
+import com.mary.alcyoneplus.Data.scheduleOfflineDto
+import com.mary.alcyoneplus.utils.ConnectivityManager
+import com.mary.alcyoneplus.utils.ConnectivityObserver
 import com.mary.alcyoneplus.utils.DataStoreManager
 import com.mary.alcyoneplus.utils.SharedPrefManager
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.stateIn
 
 
@@ -27,19 +32,15 @@ import kotlinx.coroutines.flow.stateIn
 class MainViewModel @Inject constructor(
     private val repository: repository,
     private val settingsDataStore: DataStoreManager,
-    private val sharedPrefManager: SharedPrefManager
+    private val sharedPrefManager: SharedPrefManager,
+    private val offlineSchedule: ScheduleOfflineRepository,
+    private val connectivityObserver: ConnectivityObserver
 ): ViewModel() {
 
     val isFirstLaunch = sharedPrefManager.getFirstLaunch("saveFirstLaunch", false)
 
     fun saveFirstLaunch(key: String, value: Boolean) {
         return sharedPrefManager.saveFirstLaunch(key, value)
-    }
-
-    fun setFirstLaunch(completed: Boolean) {
-        viewModelScope.launch {
-            settingsDataStore.setFirstLaunch(completed)
-        }
     }
 
     val switchState: StateFlow<Boolean> = settingsDataStore.switchFlow
@@ -49,7 +50,6 @@ class MainViewModel @Inject constructor(
             settingsDataStore.saveSwitchState(isEnabled)
         }
     }
-
 
     val selectedItem: StateFlow<Int> = settingsDataStore.selectedItemFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
@@ -67,6 +67,9 @@ class MainViewModel @Inject constructor(
     //для получения всех данных расписания
     private val _exampleFlowTest = MutableStateFlow<ApiResult<List<TableTestDto>>>(ApiResult.Loading)
     private val _exampleFlowTestEXP = MutableStateFlow<ApiResult<List<ScheduleDtoEXP>>>(ApiResult.Loading)
+
+
+    private val _exampleFlowTestEXPOffline = MutableStateFlow<List<scheduleOfflineDto>>(emptyList())
 
     //для обмена данных выбранного дня
     private val _selectedDay = mutableStateOf("")
@@ -88,36 +91,12 @@ class MainViewModel @Inject constructor(
     val filteredData: StateFlow<ApiResult<List<Any>>> get() = _filteredData
 
     fun filterData(selectDay: String, selectWeek: String) {
-        var dayOfWeek = selectDay //MONDAY
-//        Log.e("ApiResult", dayOfWeek)
-        var numOfWeek = selectWeek //четная
-//        Log.e("ApiResult", numOfWeek)
-
+        var dayOfWeek = selectDay
+        var numOfWeek = selectWeek
         viewModelScope.launch {
             settingsDataStore.selectedItemFlow.collectLatest {
                 when(it) {
                     0 -> {
-//                        _exampleFlowTest.collect { apiResult ->
-//                            when (apiResult) {
-//                                is ApiResult.Success -> {
-//                                    val filteredData = apiResult.data.filter { table ->
-//                                        table.day == dayOfWeek && table.parity == numOfWeek
-//                                    }
-//                                    _filteredDataFlow.value = ApiResult.Success(filteredData)
-//                                    Log.e("ApiResult2", _filteredDataFlow.value.toString())
-//                                }
-//
-//                                is ApiResult.Error -> {
-//                                    // Оставляем ошибку без изменений и сохраняем Loading в отфильтрованных данных
-//                                    _filteredDataFlow.value = ApiResult.Loading
-//                                }
-//
-//                                ApiResult.Loading -> {
-//                                    // Оставляем состояние загрузки без изменений
-//                                    _filteredDataFlow.value = ApiResult.Loading
-//                                }
-//                            }
-//                        }
                         _exampleFlowTestEXP.collectLatest { apiResult ->
                             when(apiResult) {
                                 is ApiResult.Success -> {
@@ -140,27 +119,6 @@ class MainViewModel @Inject constructor(
                         }
                     }
                     1 -> {
-//                        _exampleFlowTest.collect { apiResult ->
-//                            when (apiResult) {
-//                                is ApiResult.Success -> {
-//                                    val filteredData = apiResult.data.filter { table ->
-//                                        table.day == dayOfWeek && table.parity == numOfWeek
-//                                    }
-//                                    _filteredDataFlow.value = ApiResult.Success(filteredData)
-//                                    Log.e("ApiResult2", _filteredDataFlow.value.toString())
-//                                }
-//
-//                                is ApiResult.Error -> {
-//                                    // Оставляем ошибку без изменений и сохраняем Loading в отфильтрованных данных
-//                                    _filteredDataFlow.value = ApiResult.Loading
-//                                }
-//
-//                                ApiResult.Loading -> {
-//                                    // Оставляем состояние загрузки без изменений
-//                                    _filteredDataFlow.value = ApiResult.Loading
-//                                }
-//                            }
-//                        }
                         _exampleFlowTestEXP.collectLatest { apiResult ->
                             when(apiResult) {
                                 is ApiResult.Success -> {
@@ -236,27 +194,37 @@ class MainViewModel @Inject constructor(
 
     private fun fetchTables(selectedItem: Int) {
         viewModelScope.launch {
-            when(selectedItem) {
-                0 -> {
-//                    repository.getExampleFlowTest().collectLatest { data ->
-//                        _exampleFlowTest.update { data }
-//                    }
-                    repository.getSchedule2111YEXP().collectLatest { data ->
-                        _exampleFlowTestEXP.update { data }
-                    }
 
-                }
-                1 -> {
-//                    repository.getSchedule2111().collectLatest { data ->
-//                        _exampleFlowTest.update { data }
-//                    }
-                    repository.getSchedule2111YEXP().collectLatest { data ->
-                        _exampleFlowTestEXP.update { data }
+            connectivityObserver.observe().collectLatest { status->
+                when(status) {
+                    ConnectivityManager.Status.Available -> {
+                        when(selectedItem) {
+                            0 -> {
+                                repository.getSchedule2111YEXP().collectLatest { data ->
+                                    _exampleFlowTestEXP.update { data }
+                                }
+
+                            }
+                            1 -> {
+                                repository.getSchedule2111YEXP().collectLatest { data ->
+                                    _exampleFlowTestEXP.update { data }
+                                }
+                            }
+                            2 -> {
+                                repository.getSchedule2111YEXP().collectLatest { data ->
+                                    _exampleFlowTestEXP.update { data }
+                                }
+                            }
+                        }
                     }
-                }
-                2 -> {
-                    repository.getSchedule2111YEXP().collectLatest { data ->
-                        _exampleFlowTestEXP.update { data }
+                    ConnectivityManager.Status.Losing -> {
+                        
+                    }
+                    ConnectivityManager.Status.Lost -> {
+
+                    }
+                    ConnectivityManager.Status.Unavailable -> {
+
                     }
                 }
             }

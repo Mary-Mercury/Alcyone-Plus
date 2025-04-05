@@ -8,7 +8,9 @@ import android.preference.PreferenceManager
 import com.mary.alcyoneplus.BuildConfig
 import com.mary.alcyoneplus.Data.NetworkRequests
 import com.mary.alcyoneplus.Data.RepositoryImpl
+import com.mary.alcyoneplus.Data.ScheduleOfflineRepository
 import com.mary.alcyoneplus.Data.repository
+import com.mary.alcyoneplus.utils.ConnectivityObserver
 import com.mary.alcyoneplus.utils.DataStoreManager
 import dagger.Module
 import dagger.Provides
@@ -64,6 +66,18 @@ object Supabase {
     @Singleton
     fun provideSharedPreferences(application: Application): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(application)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(@ApplicationContext context: Context): ScheduleOfflineRepository {
+        return ScheduleOfflineRepository(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideConnectivityObserver(@ApplicationContext context: Context): ConnectivityObserver {
+        return ConnectivityObserver(context)
     }
 }
 

@@ -194,40 +194,40 @@ class MainViewModel @Inject constructor(
 
     private fun fetchTables(selectedItem: Int) {
         viewModelScope.launch {
-
-            connectivityObserver.observe().collectLatest { status->
-                when(status) {
-                    ConnectivityManager.Status.Available -> {
-                        when(selectedItem) {
-                            0 -> {
-                                repository.getSchedule2111YEXP().collectLatest { data ->
-                                    _exampleFlowTestEXP.update { data }
-                                }
-
-                            }
-                            1 -> {
-                                repository.getSchedule2111YEXP().collectLatest { data ->
-                                    _exampleFlowTestEXP.update { data }
-                                }
-                            }
-                            2 -> {
-                                repository.getSchedule2111YEXP().collectLatest { data ->
-                                    _exampleFlowTestEXP.update { data }
-                                }
-                            }
-                        }
+            when(selectedItem) {
+                0 -> {
+                    repository.getSchedule2111YEXP().collectLatest { data ->
+                        _exampleFlowTestEXP.update { data }
                     }
-                    ConnectivityManager.Status.Losing -> {
-                        
-                    }
-                    ConnectivityManager.Status.Lost -> {
 
+                }
+                1 -> {
+                    repository.getSchedule2111YEXP().collectLatest { data ->
+                        _exampleFlowTestEXP.update { data }
                     }
-                    ConnectivityManager.Status.Unavailable -> {
-
+                }
+                2 -> {
+                    repository.getSchedule2111YEXP().collectLatest { data ->
+                        _exampleFlowTestEXP.update { data }
                     }
                 }
             }
+//            connectivityObserver.observe().collectLatest { status->
+//                when(status) {
+//                    ConnectivityManager.Status.Available -> {
+//
+//                    }
+//                    ConnectivityManager.Status.Losing -> {
+//
+//                    }
+//                    ConnectivityManager.Status.Lost -> {
+//
+//                    }
+//                    ConnectivityManager.Status.Unavailable -> {
+//
+//                    }
+//                }
+//            }
         }
     }
 

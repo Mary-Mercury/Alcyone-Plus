@@ -1,113 +1,100 @@
 package com.mary.alcyoneplus.UI
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mary.alcyoneplus.Data.TableTestDto
 import com.mary.compose.AlcyonePlusTheme
 
 @Composable
-fun ScheduleCard(tableTestDto: TableTestDto?) {
-
-    val state = remember {
-        MutableTransitionState(false).apply {
-            targetState = false
-        }
-    }
+fun ScheduleCard2(
+    schedule: String,
+    time: String,
+    auditory: String,
+    type: String?,
+    note: String?
+) {
+    var expanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(3.dp), // Отступ между карточками
-//        shape = RectangleShape // Устанавливаем острые углы
+            .padding(5.dp)
+            .clickable { expanded = !expanded },
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(start = 1.dp, end = 10.dp, bottom = 4.dp, top = 4.dp)
-                .clickable {
-                    state.targetState = !state.targetState
-                }
+                .padding(5.dp)
+                .animateContentSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = tableTestDto?.SubName ?: "Null",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp)
+                text = schedule,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             )
-            Column(
-                modifier = Modifier
-
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(
-                        text = tableTestDto?.time ?: "Null",
-                        fontSize = 11.sp,
-                        modifier = Modifier
-                            .padding(start = 5.dp, end = 15.dp)
-                    )
-                    Text(
-                        text = tableTestDto?.AudName ?: "Null",
-                        fontSize = 11.sp,
-                        modifier = Modifier
-                            .padding(start = 5.dp, end = 15.dp)
-                    )
-                    Text(
-                        text = if (tableTestDto?.type !=null) tableTestDto.type else "нд",
-                        fontSize = 11.sp,
-                        modifier = Modifier
-                            .padding(start = 5.dp, end = 5.dp)
-                    )
-                    Text(
-                        text = "нажмите для доп. информации",
-                        fontSize = 11.sp,
-                        modifier = Modifier
-                            .padding(start = 5.dp, end = 5.dp),
-                        textAlign = TextAlign.Right
-                    )
-                }
-            }
-            AnimatedVisibility(visibleState = state) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Примечание от администратора: ${tableTestDto?.note ?: ""}",
-                    fontSize = 11.sp,
-                    modifier = Modifier
-                        .padding(start = 5.dp, end = 15.dp)
+                    text = time,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = auditory,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = type?: "null",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+//                Text(
+//                    text = "Аль Ханани",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    modifier = Modifier.weight(1f)
+//                )
+            }
+            if (expanded) {
+                Divider(modifier = Modifier.padding(vertical = 4.dp))
+                Text(
+                    text = note?: "null",
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp)
+                )
+            } else {
+                Text(
+                    text = "нажмите для доп. информации",
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                 )
             }
         }
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview
 @Composable
 fun ScheduleCardPreview() {
     AlcyonePlusTheme {
-        ScheduleCard(tableTestDto = null)
+        ScheduleCard2("Моделирование систем", "10:40", "У-512", "Лекция", "")
     }
-
 }

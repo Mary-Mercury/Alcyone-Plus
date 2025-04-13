@@ -14,7 +14,7 @@ import com.mary.alcyoneplus.Data.ApiResult
 import com.mary.alcyoneplus.Data.ScheduleDtoEXP
 import com.mary.alcyoneplus.Data.TableTestDto
 import com.mary.alcyoneplus.UI.MainViewModel
-import com.mary.alcyoneplus.UI.ScheduleCard
+import com.mary.alcyoneplus.UI.ScheduleCard2
 import com.mary.alcyoneplus.UI.ScheduleCardEXP
 
 @Composable
@@ -40,7 +40,7 @@ fun FirstTab(
                 "четная" -> {
                     LazyColumn {
                         items(lastSixItems) { news ->
-                            ScheduleCardEXP(
+                            ScheduleCard2(
                                 schedule = news.subNameEven,
                                 time = news.time,
                                 auditory = news.audNameEven,
@@ -53,7 +53,7 @@ fun FirstTab(
                 "нечетная" -> {
                     LazyColumn {
                         items(lastSixItems) { news ->
-                            ScheduleCardEXP(
+                            ScheduleCard2(
                                 schedule = news.unSubNameEven,
                                 time = news.time,
                                 auditory = news.unAudNameEven,
@@ -93,7 +93,7 @@ fun SecondTab(
                 "четная" -> {
                     LazyColumn {
                         items(lastSixItems) { news ->
-                            ScheduleCardEXP(
+                            ScheduleCard2(
                                 schedule = news.subNameEven,
                                 time = news.time,
                                 auditory = news.audNameEven,
@@ -106,7 +106,7 @@ fun SecondTab(
                 "нечетная" -> {
                     LazyColumn {
                         items(lastSixItems) { news ->
-                            ScheduleCardEXP(
+                            ScheduleCard2(
                                 schedule = news.unSubNameEven,
                                 time = news.time,
                                 auditory = news.unAudNameEven,
